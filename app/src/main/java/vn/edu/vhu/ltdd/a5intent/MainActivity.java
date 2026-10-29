@@ -21,14 +21,17 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
+    // TODO: thay 2201234567 bằng MSSV của bạn
     private static final String TAG = "A5_231A010596";
 
+    /** Khóa dùng chung cho hai màn hình — luôn khai báo hằng số, không gõ chuỗi hai lần. */
     public static final String EXTRA_CONTACT = "extra_contact";
     public static final String EXTRA_NGUOI_GUI = "extra_nguoi_gui";
 
     private EditText edtHoTen, edtDienThoai, edtEmail;
     private TextView tvKetQuaTraVe;
 
+    /** Bộ nhận kết quả trả về từ DetailActivity (thay cho onActivityResult đã lỗi thời). */
     private final ActivityResultLauncher<Intent> chiTietLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -72,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         btnChiaSe.setOnClickListener(v -> chiaSe());
     }
 
-    // ============ INTENT TƯỜNG MINH ============
+    // ============ INTENT TƯỜNG MINH (explicit) ============
 
     private void moManHinhChiTiet() {
         String hoTen = edtHoTen.getText().toString().trim();
@@ -80,17 +83,22 @@ public class MainActivity extends AppCompatActivity {
             edtHoTen.setError(getString(R.string.err_empty));
             return;
         }
-        Contact contact = new Contact(hoTen,
+
+        // Đã cập nhật truyền đủ 4 tham số (bao gồm chuỗi "" cho trường ghi chú ở NC1)
+        Contact contact = new Contact(
+                hoTen,
                 edtDienThoai.getText().toString().trim(),
-                edtEmail.getText().toString().trim());
+                edtEmail.getText().toString().trim(),
+                ""
+        );
 
         Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra(EXTRA_CONTACT, contact);
-        intent.putExtra(EXTRA_NGUOI_GUI, TAG);
-        chiTietLauncher.launch(intent);
+        intent.putExtra(EXTRA_CONTACT, contact);          // đóng gói cả đối tượng
+        intent.putExtra(EXTRA_NGUOI_GUI, TAG);            // dữ liệu đơn giản kèm theo
+        chiTietLauncher.launch(intent);                   // mở và CHỜ kết quả trả về
     }
 
-    // ============ INTENT NGẦM ĐỊNH ============
+    // ============ INTENT NGẦM ĐỊNH (implicit) ============
 
     private void goiDien() {
         String sdt = edtDienThoai.getText().toString().trim();
@@ -123,43 +131,5 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.err_no_app, Toast.LENGTH_SHORT).show();
             Log.w(TAG, "Không có ứng dụng nào xử lý: " + intent.getAction(), e);
         }
-    }
-
-    // ============ CALLBACK VÒNG ĐỜI (GHI LOGCAT) ============
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "MainActivity: onStart");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG, "MainActivity: onResume");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "MainActivity: onPause");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "MainActivity: onStop");
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(TAG, "MainActivity: onRestart");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "MainActivity: onDestroy");
     }
 }

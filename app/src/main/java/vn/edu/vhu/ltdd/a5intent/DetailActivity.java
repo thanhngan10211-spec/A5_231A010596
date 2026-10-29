@@ -6,8 +6,11 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.IntentCompat;
 import androidx.core.graphics.Insets;
@@ -20,6 +23,20 @@ public class DetailActivity extends AppCompatActivity {
 
     private Contact contact;
     private EditText edtHoTenMoi;
+
+    // Bộ nhận kết quả trả về từ NoteActivity (Màn hình 3)
+    private final ActivityResultLauncher<Intent> noteLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Contact updatedContact = IntentCompat.getParcelableExtra(
+                            result.getData(), MainActivity.EXTRA_CONTACT, Contact.class);
+                    if (updatedContact != null) {
+                        contact = updatedContact;
+                        Toast.makeText(this, "Đã cập nhật ghi chú!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +54,13 @@ public class DetailActivity extends AppCompatActivity {
         edtHoTenMoi = findViewById(R.id.edtHoTenMoi);
         Button btnLuu = findViewById(R.id.btnLuu);
         Button btnHuy = findViewById(R.id.btnHuy);
+        Button btnMoGhiChu = findViewById(R.id.btnMoGhiChu);
 
-        // Lấy dữ liệu do màn hình trước gửi sang
         contact = IntentCompat.getParcelableExtra(getIntent(),
                 MainActivity.EXTRA_CONTACT, Contact.class);
         String nguoiGui = getIntent().getStringExtra(MainActivity.EXTRA_NGUOI_GUI);
 
-        if (contact == null) {                       // luôn phòng trường hợp không nhận được dữ liệu
+        if (contact == null) {
             tvThongTin.setText(R.string.no_data);
             Log.w(TAG, "Không nhận được Contact từ Intent");
             return;
@@ -53,6 +70,13 @@ public class DetailActivity extends AppCompatActivity {
                 contact.getHoTen(), contact.getDienThoai(), contact.getEmail()));
         tvNguoiGui.setText(getString(R.string.sent_by, nguoiGui));
         edtHoTenMoi.setText(contact.getHoTen());
+
+        // Sự kiện bấm nút mở Màn hình Ghi chú
+        btnMoGhiChu.setOnClickListener(v -> {
+            Intent intent = new Intent(DetailActivity.this, NoteActivity.class);
+            intent.putExtra(MainActivity.EXTRA_CONTACT, contact);
+            noteLauncher.launch(intent);
+        });
 
         btnLuu.setOnClickListener(v -> luuVaQuayLai());
         btnHuy.setOnClickListener(v -> {
@@ -74,34 +98,5 @@ public class DetailActivity extends AppCompatActivity {
         setResult(RESULT_OK, ketQua);
         Log.d(TAG, "Trả kết quả về: " + hoTenMoi);
         finish();
-    }
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d("A5_231A010596", "DetailActivity: onCreate -> onStart");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("A5_231A010596", "DetailActivity: onResume");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d("A5_231A010596", "DetailActivity: onPause");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d("A5_231A010596", "DetailActivity: onStop");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d("A5_231A010596", "DetailActivity: onDestroy");
     }
 }

@@ -37,6 +37,15 @@
         android:importantForAutofill="no"
         android:inputType="textPersonName" />
 
+    <!-- Nút mở màn hình Ghi chú (Màn hình 3) -->
+    <Button
+        android:id="@+id/btnMoGhiChu"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Mở màn hình Ghi chú" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

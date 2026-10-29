@@ -3,28 +3,25 @@ package vn.edu.vhu.ltdd.a5intent;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Đối tượng được đóng gói để truyền qua Intent.
- * Parcelable nhanh hơn Serializable vì Android tự sinh mã đọc/ghi thay cho cơ chế phản chiếu.
- * Mẹo: gõ "implements Parcelable" rồi nhấn Alt+Enter, Android Studio sinh sẵn phần khung.
- */
 public class Contact implements Parcelable {
 
     private String hoTen;
     private String dienThoai;
     private String email;
+    private String ghiChu; // Thêm thuộc tính ghi chú cho NC1
 
-    public Contact(String hoTen, String dienThoai, String email) {
+    public Contact(String hoTen, String dienThoai, String email, String ghiChu) {
         this.hoTen = hoTen;
         this.dienThoai = dienThoai;
         this.email = email;
+        this.ghiChu = ghiChu;
     }
 
-    /** Đọc lại dữ liệu ĐÚNG THỨ TỰ đã ghi trong writeToParcel. */
     protected Contact(Parcel in) {
         hoTen = in.readString();
         dienThoai = in.readString();
         email = in.readString();
+        ghiChu = in.readString(); // Đọc ghi chú đúng thứ tự
     }
 
     @Override
@@ -32,6 +29,7 @@ public class Contact implements Parcelable {
         dest.writeString(hoTen);
         dest.writeString(dienThoai);
         dest.writeString(email);
+        dest.writeString(ghiChu); // Ghi ghi chú
     }
 
     @Override
@@ -52,8 +50,14 @@ public class Contact implements Parcelable {
     };
 
     public String getHoTen() { return hoTen; }
-    public String getDienThoai() { return dienThoai; }
-    public String getEmail() { return email; }
-
     public void setHoTen(String hoTen) { this.hoTen = hoTen; }
+
+    public String getDienThoai() { return dienThoai; }
+    public void setDienThoai(String dienThoai) { this.dienThoai = dienThoai; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getGhiChu() { return ghiChu; }
+    public void setGhiChu(String ghiChu) { this.ghiChu = ghiChu; }
 }
