@@ -73,6 +73,26 @@ public class MainActivity extends AppCompatActivity {
         btnGoi.setOnClickListener(v -> goiDien());
         btnWeb.setOnClickListener(v -> moTrangWeb());
         btnChiaSe.setOnClickListener(v -> chiaSe());
+
+        Intent incomingIntent = getIntent();
+        String action = incomingIntent.getAction();
+        String type = incomingIntent.getType();
+
+// Kiểm tra xem Intent có phải là hành động SEND và định dạng là text/plain không
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                // Lấy chuỗi văn bản được chia sẻ từ app khác sang
+                String sharedText = incomingIntent.getStringExtra(Intent.EXTRA_TEXT);
+
+                if (sharedText != null && !sharedText.isEmpty()) {
+                    // Đưa văn bản nhận được điền thẳng vào ô Họ tên hoặc ô Điện thoại tùy ý bạn
+                    edtHoTen.setText(sharedText);
+
+                    // Thông báo nhỏ cho người dùng biết đã nhận thành công
+                    Toast.makeText(this, "Đã nhận văn bản chia sẻ!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     // ============ INTENT TƯỜNG MINH (explicit) ============
